@@ -1,3 +1,5 @@
+import random
+
 import tensorflow as tf
 import tensorflow_hub as hub
 import numpy as np
@@ -39,8 +41,11 @@ def traditional_image_blending(img_path1, img_path2):
         img1 = img1[:min_height, :min_width]
         img2 = img2[:min_height, :min_width]
 
-    # Blend the images
-    blended_image = (img1 + img2) / 2.0
+        # Generate a random number for blending
+    alpha = random.uniform(0, 1)  # generate a random float between 0 and 1
+
+    # Blend the images with the random alpha
+    blended_image = (img1 * alpha + img2 * (1 - alpha))
 
     return blended_image
 

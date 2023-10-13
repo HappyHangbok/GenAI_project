@@ -1,56 +1,37 @@
-# Libraries for building GUI
-import tkinter as tk
-import customtkinter as ctk
-
-# Machine Learning libraries
+import argparse
+import os
 import torch
 from torch import autocast
 from diffusers import StableDiffusionPipeline
+from PIL import Image
 
-# Libraries for processing image
-from PIL import ImageTk
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description="Text to Image Generation")
+parser.add_argument("text", type=str, help="Input text for image generation")
+args = parser.parse_args()
 
-# private modules
-from authtoken import auth_token
+# Download stable diffusion model from Hugging Face
 
-# Create app user interface
-app = tk.Tk()
-app.geometry("532x632")
-app.title("Text to Image app")
-app.configure(bg='black')
-ctk.set_appearance_mode("dark")
-
-# Create input box on the user interface
-prompt = ctk.CTkEntry(height=40, width=512, text_font=("Arial", 15), text_color="white", fg_color="black")
-prompt.place(x=10, y=10)
-
-# Create a placeholder to show the generated image
-img_placeholder = ctk.CTkLabel(height=512, width=512, text="")
-img_placeholder.place(x=10, y=110)
-
-# Download stable diffusion model from hugging face
 modelid = "CompVis/stable-diffusion-v1-4"
-device = "cuda"
-stable_diffusion_model = StableDiffusionPipeline.from_pretrained(modelid, revision="fp16", torch_dtype=torch.float16, use_auth_token=auth_token)
-stable_diffusion_model.to(device)
-
+device = "cuda" if torch.cuda.is_available() else "cpu"  # Use GPU if available, otherwise CPU
+try:
+    stable_diffusion_model = StableDiffusionPipeline.from_pretrained(modelid, revision="fp16")
+    print("Model loaded successfully!")
+except Exception as e:
+    print("Failed to load the model:", str(e))
 
 # Generate image from text
-def generate_image():
-    """ This function generate image from a text with stable diffusion"""
-    with autocast(device):
-        image = stable_diffusion_model(prompt.get(), guidance_scale=8.5)["sample"][0]
+with autocast(device):
+    image = stable_diffusion_model(args.text, guidance_scale=8.5)["sample"][0]
 
-    # Save the generated image
-    image.save('generatedimage.png')
+# Save the generated image with a unique filename
+num = 1
+while True:
+    output_filename = f"output{num}.png"
+    if not os.path.exists(output_filename):
+        break
+    num += 1
 
-    # Display the generated image on the user interface
-    img = ImageTk.PhotoImage(image)
-    img_placeholder.configure(image=img)
+image.save(output_filename)
 
-    trigger = ctk.CTkButton(height=40, width=120, text_font=("Arial", 15), text_color="black", fg_color="white",
-                            command=generate_image)
-    trigger.configure(text="Generate")
-    trigger.place(x=206, y=60)
-
-    app.mainloop()
+print(f"Image saved as {output_filename}")
