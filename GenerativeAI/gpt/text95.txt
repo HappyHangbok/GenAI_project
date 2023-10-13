@@ -1,0 +1,1 @@
+Generative AI has been implemented in many different ways, with one notable one being the use of real-time predictive algorithms

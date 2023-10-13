@@ -1,0 +1,1 @@
+Generative AI has been able to detect and track a small percentage of malicious code, but the majority of the malicious code

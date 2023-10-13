@@ -1,0 +1,1 @@
+capability to automatically learn and take actions that exhibits traits associated with the simulation of achieving a subset of artificial

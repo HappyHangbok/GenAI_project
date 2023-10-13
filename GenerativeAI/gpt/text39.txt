@@ -1,0 +1,3 @@
+Generative AI has already been implemented in some form in both software and hardware.
+
+However, the benefits of the

@@ -1,0 +1,1 @@
+Generative AI has been around for a while now, but it's actually a much lighter, more elegant implementation.
